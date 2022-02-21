@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity("product")
 export class Product extends BaseEntity {
@@ -11,8 +18,11 @@ export class Product extends BaseEntity {
   @Column({ unique: true })
   ItemCode: string;
 
-  @Column()
+  @Column({ nullable: true })
   Description: string;
+
+  @Column()
+  Company: string;
 
   @Column()
   Quantity: number;
@@ -23,6 +33,9 @@ export class Product extends BaseEntity {
   @Column({ nullable: true })
   Note: string;
 
-  @Column()
-  BuyingDate: Date;
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
