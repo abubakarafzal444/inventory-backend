@@ -8,7 +8,8 @@ import { AllProductsRoute } from "./src/routes/products";
 import express from "express";
 import bodyParser from "body-parser";
 import * as path from "path";
-
+const root = require("require-main-filename")();
+//  cb(null, path.join(root, "src", "util", "images"));
 const multer = require("multer");
 
 const { initializeApp, cert } = require("firebase-admin/app");
@@ -65,7 +66,7 @@ app.use(bodyParser.json());
 //multer configuration
 const fileStorage = multer.diskStorage({
   destination: (req: any, file: any, cb: any) => {
-    cb(null, path.join(__dirname, "src", "util", "images"));
+    cb(null, path.join(root, "..", "src", "util", "images"));
   },
   filename: (req: any, file: any, cb: any) => {
     // cb(null, Math.random().toString() + "-" + file.originalname);
