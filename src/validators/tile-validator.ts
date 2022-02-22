@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { createQueryBuilder } from "typeorm";
+const { firebaseUpload } = require("../middlewares/firebase-upload");
 
 exports.validateTileData = [
   body("Name").trim().notEmpty().withMessage("Name field cannot be empty!"),
@@ -37,13 +38,20 @@ exports.validateTileData = [
         errorsArray: errors.array(),
       });
     }
-    if (!req.imgURL) {
+    if (!req.file) {
       return res.status(422).json({
         message: "Please select a valid photo of product",
-        errorsArray: [],
+        errorsArray: [
+          {
+            msg: "Please select a valid photo of product",
+            param: "name",
+            location: "body",
+          },
+        ],
       });
     }
 
     next();
   },
+  firebaseUpload,
 ];
