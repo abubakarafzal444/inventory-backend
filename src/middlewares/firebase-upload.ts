@@ -1,11 +1,11 @@
-const fs = require("fs");
-const path = require("path");
-const root = require("require-main-filename")();
-const { getStorage } = require("firebase-admin/storage");
-const { v4: uuidv4 } = require("uuid");
+import * as fs from "fs";
+import * as path from "path";
+import { getStorage } from "firebase-admin/storage";
+import { v4 as uuid } from "uuid";
+import { initializeApp, cert } from "firebase-admin/app";
 
-const { initializeApp, cert } = require("firebase-admin/app");
 const serviceAccount = require("../../firebaseStorageConfig.json");
+const root = require("require-main-filename")();
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -20,27 +20,31 @@ const uploadFile = async (path: string, filename: string) => {
     public: true,
     destination: filename,
     metadata: {
-      firebaseStorageDownloadTokens: uuidv4(),
+      firebaseStorageDownloadTokens: uuid(),
     },
   });
   return stored[0].metadata.mediaLink;
 };
 
 //middleware that will upload image if it exists
-exports.firebaseUpload = (req: any, res: any, next: any) => {
+const firebaseUpload = (req: any, res: any, next: any) => {
   if (req.file) {
     uploadFile(req.file.path, req.file.filename)
       .then((ret) => {
-        req.imgURL = ret;
+        req.body.ImageURL = ret;
         fs.unlinkSync(
           path.join(root, "..", "src", "util", "images", req.file.filename)
         );
         next();
       })
       .catch((err) => {
-        res.status(500).json({
+        return res.status(500).json({
           message: "Image storage error. Please try again later!",
         });
       });
-  }
+  } else next();
+  // return res.status(500).json({
+  //   message: "Image storage error. Please try again later!",
+  // });
 };
+export default firebaseUpload;

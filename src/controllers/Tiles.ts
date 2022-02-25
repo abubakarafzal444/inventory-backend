@@ -1,26 +1,26 @@
 import { Request, Response, NextFunction } from "express";
 import { Tile } from "../Entities/Tile";
-exports.getAllTiles = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+import { CustomError } from "../util/custom/classes";
+
+const getAllTiles = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const AllTiles = await Tile.find();
-    if (AllTiles) {
-      return res
-        .status(200)
-        .json({ data: AllTiles, message: "Fetching tile data successful" });
-    }
-  } catch {
+    if (!AllTiles) throw new CustomError(404, "No tile was found!");
+
     return res
-      .status(500)
-      .json({ message: "Something went wrong. Please try again later!" });
+      .status(200)
+      .json({ data: AllTiles, message: "Fetching tile data successful" });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.statusCode).json({ message: err.message });
+    } else
+      res
+        .status(500)
+        .json({ message: "Something went wrong. Please try again later!" });
   }
-  return res.status(404).json({ message: "No tile was found! " });
 };
 
-exports.addNewTile = (req: Request, res: Response, next: NextFunction) => {
+const addNewTile = (req: Request, res: Response, next: NextFunction) => {
   const {
     Name,
     ItemCode,
@@ -34,7 +34,9 @@ exports.addNewTile = (req: Request, res: Response, next: NextFunction) => {
     TileType,
     PcsInBox,
     Company,
+    ImageURL,
   } = req.body;
+
   const newTile = Tile.create({
     Name,
     ItemCode,
@@ -48,16 +50,21 @@ exports.addNewTile = (req: Request, res: Response, next: NextFunction) => {
     TileType,
     PcsInBox,
     Company,
+    ImageURL,
   });
 
   newTile
     .save()
     .then((response) => {
-      return res.status(201).json({
+      res.status(201).json({
         data: response,
-        message: "New tile has added to database successfully",
+        message: "New tile has been added to database successfully",
       });
     })
-    .catch((err) => console.log(err));
-  return res.status(405);
+    .catch(() => {
+      res.status(500).json({
+        message: "Something went wrong. Please try again later!",
+      });
+    });
 };
+export { getAllTiles, addNewTile };

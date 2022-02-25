@@ -1,13 +1,15 @@
 import { createConnection } from "typeorm";
 import { Request, Response, NextFunction } from "express";
+import { User } from "./src/Entities/User";
 import { Tile } from "./src/Entities/Tile";
 import { Grout } from "./src/Entities/Grout";
 import { AllGroutRoute } from "./src/routes/Grout";
 import { AllTilesRoute } from "./src/routes/Tiles";
 import { AllProductsRoute } from "./src/routes/products";
+import { UserRoutes } from "./src/routes/User";
 import express from "express";
 import bodyParser from "body-parser";
-const { multerMiddleware } = require("./src/middlewares/multer-config");
+import multerMiddleware from "./src/middlewares/multer-config";
 
 const app = express();
 
@@ -21,7 +23,7 @@ const main = async () => {
       username: "postgres",
       password: "bcsf20m538",
       database: "inventory",
-      entities: [Tile, Grout],
+      entities: [User, Tile, Grout],
       synchronize: true,
     });
     console.log("connected to postgres");
@@ -33,6 +35,7 @@ const main = async () => {
 main();
 
 //setting headers for CORS (Cross server resource share)
+
 app.use((req: Request, res: any, next: NextFunction) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -62,3 +65,4 @@ app.use(multerMiddleware);
 app.use(AllProductsRoute);
 app.use(AllTilesRoute);
 app.use(AllGroutRoute);
+app.use(UserRoutes);

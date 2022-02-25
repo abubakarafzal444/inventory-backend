@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Grout } from "../Entities/Grout";
 
-exports.getAllGrouts = async (
+const getAllGrouts = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -10,7 +10,7 @@ exports.getAllGrouts = async (
   res.status(200).json(AllGrouts);
 };
 
-exports.addNewGrout = (req: Request, res: Response, next: NextFunction) => {
+const addNewGrout = (req: Request, res: Response, next: NextFunction) => {
   const {
     Name,
     ItemCode,
@@ -22,6 +22,7 @@ exports.addNewGrout = (req: Request, res: Response, next: NextFunction) => {
     Color,
     Company,
   } = req.body;
+
   const newGrout = Grout.create({
     Name,
     ItemCode,
@@ -36,10 +37,8 @@ exports.addNewGrout = (req: Request, res: Response, next: NextFunction) => {
 
   newGrout
     .save()
-    .then((response) => {
-      console.log(response);
-      return res.status(201).json(newGrout);
-    })
-    .catch((err) => console.log(err));
-  return res.status(404);
+    .then((response) => res.status(201).json(newGrout))
+    .catch(() => res.status(404).json({ message: "Adding grout failed." }));
 };
+
+export { getAllGrouts, addNewGrout };

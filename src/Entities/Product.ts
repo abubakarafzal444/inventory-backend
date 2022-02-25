@@ -33,9 +33,12 @@ export class Product extends BaseEntity {
   @Column({ nullable: true })
   Note: string;
 
+  @Column({ nullable: true })
+  ImageURL: string;
+
   @CreateDateColumn()
-  created_at: Date;
+  CreatedAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  UpdatedAt: Date;
 }
