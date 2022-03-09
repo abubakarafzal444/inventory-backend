@@ -9,8 +9,8 @@ const router = Router();
 //POST ./add-user
 router.post(
   "/add-user",
-  // Authenticate,
-  //RoleAuthentication,
+  Authenticate,
+  RoleAuthentication,
   validateAddUser,
   addUser
 );

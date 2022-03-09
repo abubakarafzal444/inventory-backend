@@ -55,6 +55,7 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
         {
           UserName: loadedUser.UserName,
           id: loadedUser.id,
+          Role: loadedUser.Role,
         },
         "secret-key-to-generate-token",
         { expiresIn: "10d" }

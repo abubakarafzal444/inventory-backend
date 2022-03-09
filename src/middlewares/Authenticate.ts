@@ -4,9 +4,10 @@ import jwt from "jsonwebtoken";
 
 const Authenticate = (req: any, res: Response, next: NextFunction) => {
   const token = req.get("Authorization")?.split(" ")[1] as string;
+
   if (!token)
     return res.status(401).json({
-      message: "Authentication failed. Please login to access this resource",
+      message: "Authentication failed. Please login to access this resource1",
     });
 
   try {
@@ -15,11 +16,12 @@ const Authenticate = (req: any, res: Response, next: NextFunction) => {
     if (!decodedToken)
       throw new CustomError(
         401,
-        "Authentication failed. Please login to access this resource"
+        "Authentication failed. Please login to access this resource2"
       );
     req.UserName = decodedToken.UserName;
     req.id = decodedToken.id;
     req.Role = decodedToken.Role;
+
     next();
   } catch (err) {
     if (err instanceof CustomError) {
@@ -32,6 +34,7 @@ const Authenticate = (req: any, res: Response, next: NextFunction) => {
 };
 
 const RoleAuthentication = (req: any, res: Response, next: NextFunction) => {
+  console.log(req.Role);
   if (req.Role === "Admin") next();
   else
     return res.status(401).json({
