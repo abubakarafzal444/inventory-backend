@@ -1,13 +1,51 @@
 import { Request, Response, NextFunction } from "express";
+import { CustomError } from "../util/custom/classes";
+import { createQueryBuilder } from "typeorm";
 import { Grout } from "../Entities/Grout";
 
-const getAllGrouts = async (
+const getAllGrouts = async (req: Request, res: Response) => {
+  try {
+    const AllGrouts = await Grout.find();
+    if (!AllGrouts) throw new CustomError(404, "No grout was found!");
+    return res
+      .status(200)
+      .json({ data: AllGrouts, message: "Fetching grout data successful" });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.statusCode).json({ message: err.message });
+    } else
+      res
+        .status(500)
+        .json({ message: "Something went wrong. Please try again later!" });
+  }
+  return;
+};
+
+const getGroutDetail = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const AllGrouts = await Grout.find();
-  res.status(200).json(AllGrouts);
+  try {
+    createQueryBuilder("grout")
+      .where("Grout.ItemCode = :ItemCode", { ItemCode: req.params.ItemCode })
+      .getOne()
+      .then((grout: any) => {
+        if (!grout) throw new CustomError(404, "No grout was found!");
+        return res.status(200).json({
+          data: grout,
+          message: "Fetching grout details is successful!",
+        });
+      });
+  } catch (err) {
+    if (err instanceof CustomError) {
+      res.status(err.statusCode).json({ message: err.message });
+    } else
+      res
+        .status(500)
+        .json({ message: "Something went wrong. Please try again later!" });
+  }
+  return;
 };
 
 const addNewGrout = (req: Request, res: Response, next: NextFunction) => {
@@ -37,8 +75,17 @@ const addNewGrout = (req: Request, res: Response, next: NextFunction) => {
 
   newGrout
     .save()
-    .then((response) => res.status(201).json(newGrout))
-    .catch(() => res.status(404).json({ message: "Adding grout failed." }));
+    .then((response) => {
+      res.status(201).json({
+        data: response,
+        message: "New grout has been added to database successfully",
+      });
+    })
+    .catch(() => {
+      res.status(500).json({
+        message: "Something went wrong. Please try again later!",
+      });
+    });
 };
 
-export { getAllGrouts, addNewGrout };
+export { getAllGrouts, getGroutDetail, addNewGrout };

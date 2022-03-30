@@ -34,20 +34,6 @@ const main = async () => {
 };
 main();
 
-// export const AppDataSource = new DataSource({
-//   type: "postgres",
-//   host: "localhost",
-//   port: 5432,
-//   username: "test",
-//   password: "test",
-//   database: "test",
-//   synchronize: true,
-//   logging: true,
-//   entities: [Post, Category],
-//   subscribers: [],
-//   migrations: [],
-// })
-
 //setting headers for CORS (Cross server resource share)
 
 app.use((req: Request, res: any, next: NextFunction) => {
