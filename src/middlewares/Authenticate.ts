@@ -7,7 +7,7 @@ const Authenticate = (req: any, res: Response, next: NextFunction) => {
 
   if (!token)
     return res.status(401).json({
-      message: "Authentication failed. Please login to access this resource1",
+      message: "Authentication failed. Please login to access this resource",
     });
 
   try {
@@ -16,7 +16,7 @@ const Authenticate = (req: any, res: Response, next: NextFunction) => {
     if (!decodedToken)
       throw new CustomError(
         401,
-        "Authentication failed. Please login to access this resource2"
+        "Authentication failed. Please login to access this resource"
       );
     req.UserName = decodedToken.UserName;
     req.id = decodedToken.id;
