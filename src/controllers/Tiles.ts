@@ -31,21 +31,18 @@ const getTileDetail = async (
       .where("Tile.ItemCode = :ItemCode", { ItemCode: req.params.ItemCode })
       .getOne()
       .then((tile: any) => {
-        if (!tile) throw new CustomError(404, "No tile was found!");
+        if (!tile)
+          return res.status(404).json({ message: "no tile was found" });
         return res.status(200).json({
           data: tile,
           message: "Fetching tile details is successful!",
         });
       });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.statusCode).json({ message: err.message });
-    } else
-      res
-        .status(500)
-        .json({ message: "Something went wrong. Please try again later!" });
+    return res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again later!" });
   }
-  return;
 };
 
 const addNewTile = (req: Request, res: Response, next: NextFunction) => {

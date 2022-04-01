@@ -10,20 +10,22 @@ import { UserRoutes } from "./src/routes/User";
 import express from "express";
 import bodyParser from "body-parser";
 import multerMiddleware from "./src/middlewares/multer-config";
+import { Role } from "./src/Entities/Role";
 
 const app = express();
 
 //connecting to database
+let connection;
 const main = async () => {
   try {
-    await createConnection({
+    connection = await createConnection({
       type: "postgres",
       host: "localhost",
       port: 5432,
       username: "postgres",
       password: "bcsf20m538",
       database: "inventory",
-      entities: [User, Tile, Grout],
+      entities: [User, Role, Tile, Grout],
       synchronize: true,
     });
     console.log("connected to postgres");
@@ -65,3 +67,12 @@ app.use(AllProductsRoute);
 app.use(AllTilesRoute);
 app.use(AllGroutRoute);
 app.use(UserRoutes);
+export { connection };
+
+// getConnection()
+// .createQueryBuilder()
+// .select("user")
+// .from(User, "user")
+// .leftJoinAndSelect("user.role", "Role")
+// .where("user.UserName = :UserName", { UserName: req.body.UserName })
+// .getOne();

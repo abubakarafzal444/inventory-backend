@@ -34,7 +34,6 @@ const Authenticate = (req: any, res: Response, next: NextFunction) => {
 };
 
 const RoleAuthentication = (req: any, res: Response, next: NextFunction) => {
-  console.log(req.Role);
   if (req.Role === "Admin") next();
   else
     return res.status(401).json({

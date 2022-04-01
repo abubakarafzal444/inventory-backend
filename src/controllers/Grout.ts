@@ -31,21 +31,19 @@ const getGroutDetail = async (
       .where("Grout.ItemCode = :ItemCode", { ItemCode: req.params.ItemCode })
       .getOne()
       .then((grout: any) => {
-        if (!grout) throw new CustomError(404, "No grout was found!");
+        console.log(grout);
+        if (!grout)
+          return res.status(404).json({ message: "no grout was found" });
         return res.status(200).json({
           data: grout,
           message: "Fetching grout details is successful!",
         });
       });
   } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.statusCode).json({ message: err.message });
-    } else
-      res
-        .status(500)
-        .json({ message: "Something went wrong. Please try again later!" });
+    return res
+      .status(500)
+      .json({ message: "Something went wrong. Please try again later!" });
   }
-  return;
 };
 
 const addNewGrout = (req: Request, res: Response, next: NextFunction) => {

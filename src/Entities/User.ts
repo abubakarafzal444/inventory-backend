@@ -5,12 +5,10 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
-
-export enum UserType {
-  Admin = "Admin",
-  Employee = "Employee",
-}
+import { Role } from "./Role";
 
 @Entity("user")
 export class User extends BaseEntity {
@@ -25,12 +23,12 @@ export class User extends BaseEntity {
   @Column()
   Password: string;
 
-  @Column({ type: "enum", enum: UserType })
-  Role: string;
-
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role;
 }
